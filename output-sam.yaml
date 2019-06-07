@@ -11,20 +11,7 @@ Resources:
     Properties:
       Handler: com.cobiscorp.auth.StreamLambdaHandler::handleRequest
       Runtime: java8
-      CodeUri: s3://cobis-openapi-poc/21af0690183b4f729a7a2cdd15db66ca
+      CodeUri: s3://cobis-openapi-poc/6a81fd2698ae84252f498c354bc3ca42
       MemorySize: 1512
       Policies: AWSLambdaBasicExecutionRole
       Timeout: 60
-      Events:
-        GetResource:
-          Type: Api
-          Properties:
-            Path: /{proxy+}
-            Method: any
-Outputs:
-  SwaggerSpringApi:
-    Description: URL for application
-    Value:
-      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/auth
-    Export:
-      Name: SwaggerSpringAPI

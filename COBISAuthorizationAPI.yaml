@@ -1,0 +1,431 @@
+openapi: 3.0.0
+
+info:
+  title: COBIS API Autenticación # COBIS API Customers
+  description: 'Este es el API del sistema de autenticación y autorización del Core Banking System. Se encuentran definidos los servicios esenciales para procesos de autenticación y autorización. Puedes conseguir mas información en nuestra sitio web: [http://www.cobiscorp.com](http://www.cobiscorp.com).' # TODO: Actualizar enlace al sitio de APIs.
+  version: "1.0.0"
+  termsOfService: http://cobiscorp.com/terms/cobisapi # TODO: Términos de servicio
+  contact:
+    name: COBIS Support Center
+    url: http://www.cobiscorp.com/contact-us/customer-technical-support/
+    email: support.center@cobiscorp.com
+  license:
+    name: COBIS API License # TODO: Definir el tipo y nombre de la licencia. Condiciones de uso y Legal
+    url: http://www.cobiscorp.com/licenses/LICENSE-1.0.html # TODO: Publicar licencia.
+
+servers:
+# Added by API Auto Mocking Plugin
+  - url: https://virtserver.swaggerhub.com/eliashel/TMPAPI/1.0.0
+    description: SwaggerHub API Auto Mocking    
+  - url: http://cobisapi.cobiscorp.com/lastest/v1
+    description: Main (production) server
+  - url: http://staging-cobisapi.cobiscorp.com/v1
+    description: Internal staging server for testing
+
+##########################################################
+##                       FOR AWS                        ##
+##########################################################
+# Validación de solicitudes desde el API Gateway 
+#x-amazon-apigateway-request-validators: {
+#  all: {
+#     validateRequestBody: true,
+#     validateRequestParameters: true
+#  },
+#  params-only: {
+#     validateRequestBody: false,
+#     validateRequestParameters: true
+#  }
+#}
+# Por defecto valida todas las operaciones, tanto parámetros como cuerpo del mensaje.
+#x-amazon-apigateway-request-validator: "all"
+##########################################################
+
+
+tags:
+- name: Authentication # retrieve
+  description: 'Operaciones autenticación para usuarios que operan sobre el core bancario.'
+  # Puede inclurse más documentación
+  #externalDocs: 
+  #  description: 'Encuentre más información en'
+  #  url: http://www.cobiscorp.com/auth/authentication
+- name: Authorization # retrieve
+  description: 'Operaciones autorización para usuarios que operan sobre el core bancario.'
+  # Puede inclurse más documentación
+  #externalDocs: 
+  #  description: 'Encuentre más información en'
+  #  url: http://www.cobiscorp.com/auth/authorization
+- name: TrustRelationship # retrieve
+  description: 'Operaciones relación de confianza para usuarios que operan sobre el core bancario.'
+  # Puede inclurse más documentación
+  #externalDocs: 
+  #  description: 'Encuentre más información en'
+  #  url: http://www.cobiscorp.com/auth/authorization
+
+paths:
+  /auth/authentication:
+    post:
+      tags:
+        - Authentication
+      summary: 'Proceso de autenticación de usuarios COBIS.'
+      description: 'Retorna información de los roles de ese usuario para el proceso de autorización y el JWT.'
+      operationId: AuthenticationPSTByClerk
+      parameters:
+        # HEADER REQUEST
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-Authorization'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-Request-ID'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-Financial-ID'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-EndUser-Login'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-EndUser-RequestDateTime'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-EndUser-Terminal'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-EndUser-LastLoggedDateTime'
+      # PATH PARAMS
+      requestBody:
+        description: 'Información de autenticación del funcionario.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticationPSTRq'
+            example:
+              payload:
+                user: 'fusuario'
+                password: 'ODk3YXNkODlhc2Q='
+      responses:
+        201:
+          description: 'Se ha autenticado exitosamente.'
+          headers:
+            X-Correlation-ID:
+              $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationPSTRs'
+              example: #
+                roles:
+                    - role:
+                        code: '1'
+                        description: 'CONSULTA'
+                        solidarity: '99'
+                        branch: '1'
+                    - role:
+                        code: '3'
+                        description: 'ASESOR'
+                        solidarity: '99'
+                        branch: '1'
+                    - role:
+                        code: '5'
+                        description: 'OPERACIONES'
+                        solidarity: '99'
+                        branch: '1'
+                Links:
+                  Self: '/auth/authentication/'
+                  Navs:
+                    - LinkDetail:
+                        href: '/auth/authorization/'
+                        rel: 'Authorization'
+                        type: 'POST'
+
+        400:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/400BadRequest'
+        401:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/401Unauthorized'
+        403:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/403Forbidden'
+        404:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/404NotFound'
+        405:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/405MethodNotAllowed'
+        406:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/406NotAcceptable'
+        429:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/429TooManyRequests'
+        500:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/500InternalServerError'
+
+      x-amazon-apigateway-integration:
+        type: aws
+        uri: arn:aws:lambda:us-east-2:489014281184:function:auth-api-AuthFunction-7WHBRQVNL93Y
+        responses:
+          default:
+            statusCode: 201
+            
+  /auth/authorization:
+    post:
+      tags:
+        - Authorization
+      summary: 'Proceso de autorización de usuarios COBIS.'
+      description: 'Retorna JWT.'
+      operationId: AuthorizationPSTByRole
+      parameters:
+        # HEADER REQUEST
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-Authorization'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-Request-ID'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-Financial-ID'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-EndUser-Login'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-EndUser-RequestDateTime'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-EndUser-Terminal'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-EndUser-LastLoggedDateTime'
+      # PATH PARAMS
+      requestBody:
+        description: 'Información de autenticación del funcionario.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorizationPSTByRoleRq'
+            example:
+              payload:
+                role:
+                  code: '1'
+                  solidarity:
+                    code:  '88'
+                  branch:
+                    code: '2'
+      responses:
+        201:
+          description: 'El proceso de autorización se ha realizado con éxito.'
+          headers:
+            X-Correlation-ID:
+              $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizationPSTByRoleRs'
+              example: 
+                Links:
+                  Self: '/auth/authorization/' 
+      
+        400:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/400BadRequest'
+        401:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/401Unauthorized'
+        403:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/403Forbidden'
+        404:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/404NotFound'
+        405:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/405MethodNotAllowed'
+        406:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/406NotAcceptable'
+        429:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/429TooManyRequests'
+        500:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/500InternalServerError'
+
+      x-amazon-apigateway-integration:
+        type: aws
+        uri: arn:aws:lambda:us-east-2:489014281184:function:auth-api-AuthFunction-7WHBRQVNL93Y
+        responses:
+          default:
+            statusCode: 201
+                      
+  /auth/authorization/logout:
+    get:
+      tags:
+        - Authorization
+      summary: 'Proceso de cierre de sesión de usuarios COBIS.'
+      operationId: AuthorizationGETLogout
+      parameters:
+        # HEADER REQUEST
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-Authorization'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-Request-ID'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-Financial-ID'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-EndUser-Login'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-EndUser-RequestDateTime'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-EndUser-Terminal'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-EndUser-LastLoggedDateTime'
+      
+      responses:
+        201:
+          description: 'El proceso de cierre de la sesión se ha realizado con éxito.'
+          headers:
+            X-Correlation-ID:
+              $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-Correlation-ID'
+      
+        400:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/400BadRequest'
+        401:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/401Unauthorized'
+        403:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/403Forbidden'
+        404:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/404NotFound'
+        405:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/405MethodNotAllowed'
+        406:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/406NotAcceptable'
+        429:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/429TooManyRequests'
+        500:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/500InternalServerError'
+
+      x-amazon-apigateway-integration:
+        type: aws
+        uri: arn:aws:lambda:us-east-2:489014281184:function:auth-api-AuthFunction-7WHBRQVNL93Y
+        responses:
+          default:
+            statusCode: 201
+
+  /auth/trustrelationship:
+    post:
+      tags:
+        - TrustRelationship
+      summary: 'Proceso de relación de confianza de aplicación con COBIS.'
+      description: 'Retorna JWT.'
+      operationId: TrustRelationshipPSTByApplication
+      parameters:
+        # HEADER REQUEST
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-Authorization'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-Request-ID'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-Financial-ID'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-EndUser-Login'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-EndUser-RequestDateTime'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-EndUser-Terminal'
+        - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-EndUser-LastLoggedDateTime'
+      # PATH PARAMS
+      requestBody:
+        description: 'Información de confianza de la aplicación.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrustRelationshipPSTByApplicationRq'
+            example:
+              payload:
+                externalUser: 'kioskoUser'
+                externalApplication:
+                  name: 'kiosko'
+                
+      responses:
+        201:
+          description: 'Proceso de relación de confianza realizado con éxito.'
+          headers:
+            X-Correlation-ID:
+              $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/parameters/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrustRelationshipPSTByApplicationRs'
+              example: 
+                Links:
+                  Self: '/auth/trustrelationship/'
+      
+        400:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/400BadRequest'
+        401:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/401Unauthorized'
+        403:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/403Forbidden'
+        404:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/404NotFound'
+        405:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/405MethodNotAllowed'
+        406:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/406NotAcceptable'
+        429:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/429TooManyRequests'
+        500:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/responses/500InternalServerError'            
+          
+      x-amazon-apigateway-integration:
+        type: aws
+        uri: arn:aws:lambda:us-east-2:489014281184:function:auth-api-AuthFunction-7WHBRQVNL93Y
+        responses:
+          default:
+            statusCode: 201          
+components:
+  ####################################################################
+  # Reusable schemas (data models)
+  ####################################################################
+  schemas:
+    #########################
+    #    COMPLEX REQUEST    #
+    #########################
+    AuthenticationPSTRq: 
+      description: 'Información para autenticación.' 
+      type: object
+      required:
+        - payload
+      properties:
+        payload:          
+          properties:
+            user:
+              allOf:
+                - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/general-purpose/admin/v1/COBISAdminDomain.yaml#/components/schemas/UserLogin'
+                - type: object
+            password:
+              allOf:
+                - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/general-purpose/admin/v1/COBISAdminDomain.yaml#/components/schemas/Password'
+                - type: object
+          required:
+              - user
+              - password
+            
+    AuthorizationPSTByRoleRq: 
+      description: 'Autorización de usuarios por roles.' 
+      type: object
+      required: 
+        - payload
+      properties:
+        payload:
+          allOf:
+            - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/general-purpose/admin/v1/COBISAdminDomain.yaml#/components/schemas/Role'
+            - type: object
+          required:
+            - code
+            - subsidiary
+            - branch
+            
+    TrustRelationshipPSTByApplicationRq: 
+      description: 'Autorización por relación de confianza.' 
+      type: object
+      required: 
+        - payload
+      properties:
+        payload:
+          allOf:
+            - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/general-purpose/admin/v1/COBISAdminDomain.yaml#/components/schemas/ExternalUser'
+            - type: object
+          required:
+            - user
+            - application
+            
+    #########################
+    #    COMPLEX RESPONSE   #
+    #########################
+    
+    AuthenticationPSTRs: 
+      description: 'Roles de usuario para autorización.' 
+      type: object
+      required:
+        - roles
+      properties:
+        roles:
+          type: array
+          items:
+            allOf:
+              - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/general-purpose/admin/v1/COBISAdminDomain.yaml#/components/schemas/Role'
+              - type: object
+            required:
+              - code
+              - description
+              - subsidiary
+              - branch
+        Links:
+          allOf:
+            - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/schemas/Links'
+            
+    AuthorizationPSTByRoleRs: 
+      description: 'Navegación.' 
+      type: object
+      properties:
+        Links:
+          $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/schemas/Links'
+    
+    TrustRelationshipPSTByApplicationRs: 
+      description: 'Respuesta de la relación de confianza JWT.'
+      type: object
+      properties:
+        Links:
+          allOf:
+            - $ref: 'https://raw.githubusercontent.com/eliashel/cobisapi/master/private/domains/COBISGeneralComponents.json#/components/schemas/Links'

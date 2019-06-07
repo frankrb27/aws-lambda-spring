@@ -36,7 +36,7 @@ public class OpenAPIDocumentationConfig {
     }
 
     @Bean
-    public Docket customImplementation(ServletContext servletContext, @Value("${openapi.cOBISAPIAutenticacin.base-path:/COBISAuthAPI}") String basePath) {
+    public Docket customImplementation(ServletContext servletContext, @Value("${openapi.cOBISAPIAutenticacin.base-path:/prod}") String basePath) {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                     .apis(RequestHandlerSelectors.basePackage("com.cobiscorp.auth.controllers"))

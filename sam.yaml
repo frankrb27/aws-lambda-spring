@@ -17,16 +17,19 @@ Resources:
       MemorySize: 1512
       Policies: AWSLambdaBasicExecutionRole
       Timeout: 60
-      Events:
-        GetResource:
-          Type: Api
-          Properties:
-            Path: /{proxy+}
-            Method: any
+#      Events:
+#        MyApi:
+#          Type: Api
+#          Properties:
+#            Path: /{proxy+}
+#            Method: any
+#            RestApiId: !Ref MyApi
 
-Outputs:
-  SwaggerSpringApi:
-    Description: URL for application
-    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/auth'
-    Export:
-      Name: SwaggerSpringAPI
+#  Crear APIGateway con documentación Swagger   
+#  MyApi:
+#    Type: AWS::ApiGateway::RestApi
+#    Properties:
+#      BodyS3Location:
+#        Bucket: cobis-openapi-poc
+#        Key: specs/COBISAuthorizationAPI.yaml
+
