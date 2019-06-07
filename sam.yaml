@@ -11,6 +11,7 @@ Resources:
   AuthFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: AuthLambda
       Handler: com.cobiscorp.auth.StreamLambdaHandler::handleRequest
       Runtime: java8
       CodeUri: target/auth-1.0.0-lambda-package.zip

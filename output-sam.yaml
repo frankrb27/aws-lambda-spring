@@ -9,9 +9,10 @@ Resources:
   AuthFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: AuthLambda
       Handler: com.cobiscorp.auth.StreamLambdaHandler::handleRequest
       Runtime: java8
-      CodeUri: s3://cobis-openapi-poc/6a81fd2698ae84252f498c354bc3ca42
+      CodeUri: s3://cobis-openapi-poc/643521482dea6ddd163697cbc34d5f8d
       MemorySize: 1512
       Policies: AWSLambdaBasicExecutionRole
       Timeout: 60
