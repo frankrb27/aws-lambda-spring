@@ -1,10 +1,18 @@
 package com.cobiscorp.auth.config;
 
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
+import javax.servlet.ServletContext;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.expression.ParseException;
+import org.springframework.format.Formatter;
 import org.springframework.web.util.UriComponentsBuilder;
+
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -15,9 +23,7 @@ import springfox.documentation.spring.web.paths.RelativePathProvider;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import javax.servlet.ServletContext;
-
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-06-06T14:33:14.360-05:00[America/Bogota]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-06-06T10:06:49.620-05:00[America/Bogota]")
 
 @Configuration
 @EnableSwagger2
@@ -36,7 +42,7 @@ public class OpenAPIDocumentationConfig {
     }
 
     @Bean
-    public Docket customImplementation(ServletContext servletContext, @Value("${openapi.cOBISAPIAutenticacin.base-path:/}") String basePath) {
+    public Docket customImplementation(ServletContext servletContext, @Value("${openapi.cOBISAPIAutenticacin.base-path:/eliashel/TMPAPI/1.0.0}") String basePath) {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                     .apis(RequestHandlerSelectors.basePackage("com.cobiscorp.auth.controllers"))
@@ -46,7 +52,22 @@ public class OpenAPIDocumentationConfig {
                 .directModelSubstitute(java.time.OffsetDateTime.class, java.util.Date.class)
                 .apiInfo(apiInfo());
     }
-
+    
+    @Bean
+    public Formatter<OffsetDateTime> localDateFormatter() {
+      return new Formatter<OffsetDateTime>() {
+        @Override
+        public OffsetDateTime parse(String text, Locale locale) throws ParseException {
+          return OffsetDateTime.parse(text, DateTimeFormatter.ISO_DATE_TIME);
+        }
+     
+        @Override
+        public String print(OffsetDateTime object, Locale locale) {
+          return DateTimeFormatter.ISO_DATE_TIME.format(object);
+        }
+      };
+    }  
+    
     class BasePathAwareRelativePathProvider extends RelativePathProvider {
         private String basePath;
 

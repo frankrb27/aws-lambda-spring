@@ -16,11 +16,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
-
 
 @SpringBootApplication
-@EnableSwagger2
 @ComponentScan(basePackages = {"com.cobiscorp.auth", "com.cobiscorp.auth.controllers" , "com.cobiscorp.auth.config"})
 public class Application extends SpringBootServletInitializer {
 

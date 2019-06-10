@@ -18,7 +18,7 @@ public class StreamLambdaHandler implements RequestStreamHandler {
     static {
         try {
             handler = SpringBootLambdaContainerHandler.getAwsProxyHandler(Application.class);
-//            handler.activateSpringProfiles("lambda");
+            handler.activateSpringProfiles("OpenAPIDocumentationConfig");
             // we use the onStartup method of the handler to register our custom filter
 //            handler.onStartup(servletContext -> {
 //                FilterRegistration.Dynamic registration = servletContext.addFilter("CognitoIdentityFilter", CognitoIdentityFilter.class);

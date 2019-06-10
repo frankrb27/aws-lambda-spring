@@ -6,13 +6,25 @@ Globals:
   Api:
     EndpointConfiguration: REGIONAL
 Resources:
-  AuthFunction:
+  SwaggerSpringFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: AuthLambda
       Handler: com.cobiscorp.auth.StreamLambdaHandler::handleRequest
       Runtime: java8
-      CodeUri: s3://cobis-openapi-poc/643521482dea6ddd163697cbc34d5f8d
+      CodeUri: s3://cobis-openapi-poc/166a5b65a6f0401ba4f2a39b57ebef90
       MemorySize: 1512
       Policies: AWSLambdaBasicExecutionRole
       Timeout: 60
+      Events:
+        GetResource:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: any
+Outputs:
+  SwaggerSpringApi:
+    Description: URL for application
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/auth
+    Export:
+      Name: SwaggerSpringAPI

@@ -16,6 +16,7 @@ com\cobiscorp\auth\domain\AuthorizationPSTByRoleRs.class
 com\cobiscorp\auth\domain\ErrorResponse.class
 com\cobiscorp\auth\domain\Links.class
 com\cobiscorp\auth\StreamLambdaHandler.class
+com\cobiscorp\auth\config\OpenAPIDocumentationConfig$1.class
 com\cobiscorp\auth\domain\Subsidiary.class
 com\cobiscorp\auth\domain\AuthorizationPSTByRoleRq.class
 com\cobiscorp\auth\domain\Role.class

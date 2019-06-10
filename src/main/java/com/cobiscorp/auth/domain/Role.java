@@ -16,7 +16,7 @@ import javax.validation.constraints.*;
  * Rol de cliente funcionario de la entidad financiera.
  */
 @ApiModel(description = "Rol de cliente funcionario de la entidad financiera.")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-06-06T14:33:14.360-05:00[America/Bogota]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-06-06T10:06:49.620-05:00[America/Bogota]")
 
 public class Role   {
   @JsonProperty("code")
@@ -29,10 +29,10 @@ public class Role   {
   private String description;
 
   @JsonProperty("creationDate")
-  private java.lang.String creationDate;
+  private OffsetDateTime creationDate;
 
   @JsonProperty("lastUpdatedDate")
-  private java.lang.String lastUpdatedDate;
+  private OffsetDateTime lastUpdatedDate;
 
   @JsonProperty("branch")
   private Branch branch = null;
@@ -100,7 +100,7 @@ public class Role   {
     this.description = description;
   }
 
-  public Role creationDate(java.lang.String creationDate) {
+  public Role creationDate(OffsetDateTime creationDate) {
     this.creationDate = creationDate;
     return this;
   }
@@ -113,15 +113,15 @@ public class Role   {
 
   @Valid
 
-  public java.lang.String getCreationDate() {
+  public OffsetDateTime getCreationDate() {
     return creationDate;
   }
 
-  public void setCreationDate(java.lang.String creationDate) {
+  public void setCreationDate(OffsetDateTime creationDate) {
     this.creationDate = creationDate;
   }
 
-  public Role lastUpdatedDate(java.lang.String lastUpdatedDate) {
+  public Role lastUpdatedDate(OffsetDateTime lastUpdatedDate) {
     this.lastUpdatedDate = lastUpdatedDate;
     return this;
   }
@@ -134,11 +134,11 @@ public class Role   {
 
   @Valid
 
-  public java.lang.String getLastUpdatedDate() {
+  public OffsetDateTime getLastUpdatedDate() {
     return lastUpdatedDate;
   }
 
-  public void setLastUpdatedDate(java.lang.String lastUpdatedDate) {
+  public void setLastUpdatedDate(OffsetDateTime lastUpdatedDate) {
     this.lastUpdatedDate = lastUpdatedDate;
   }
 

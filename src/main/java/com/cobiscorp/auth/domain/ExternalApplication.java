@@ -13,7 +13,7 @@ import javax.validation.constraints.*;
  * Aplicación externa que consulta y procesa información financiera de COBIS.
  */
 @ApiModel(description = "Aplicación externa que consulta y procesa información financiera de COBIS.")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-06-06T14:33:14.360-05:00[America/Bogota]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-06-06T10:06:49.620-05:00[America/Bogota]")
 
 public class ExternalApplication   {
   @JsonProperty("code")
